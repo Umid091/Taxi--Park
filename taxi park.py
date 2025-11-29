@@ -81,10 +81,6 @@ class Park:
 
 
 
-
-
-
-
     def add_user(self):
 
         name=input("name:")
@@ -227,9 +223,6 @@ def park_manger(p:Park):
             print("---------------------------")
             p.all_info()
             print("---------------------------")
-
-
-
 
 park_manger(park)
 
