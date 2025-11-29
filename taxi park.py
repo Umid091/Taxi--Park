@@ -60,7 +60,7 @@ class Park:
     def update_car(self):
         seria = int(input("seria raqami:"))
         for i in self.cars:
-            # model, brand, year, seria):
+
             if i.seria == seria:
                 i.model=input("new model:")
                 i.brand=input("new brand:")
@@ -124,14 +124,14 @@ class Park:
             count+=1
 
     def add_oder(self):
-        user_id = int(input("user seria: "))  # inputni int ga o‘zgartirdik
+        user_id = int(input("user seria: "))
         for i in self.users:
             if i.seria == user_id:
                 if i.is_active == False:
                     print("❌ User bloklangan!")
                     return
 
-                car_id = int(input("car seria: "))  # inputni int ga o‘zgartirdik
+                car_id = int(input("car seria: "))
 
                 car_found = False
                 for j in self.cars:
