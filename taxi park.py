@@ -12,13 +12,16 @@ class Car:
         self.is_active = True
 
 
+
 class User:
-    def __init__(self, name, phone, age, seria,):
+    def __init__(self, name, phone, age, seria,password):
         self.name = name
         self.phone = phone
         self.age = age
         self.seria = seria
         self.is_active=True
+        self.password = password
+        self.is_admin = False
 
 
 class Order:
@@ -87,7 +90,8 @@ class Park:
         phone=int(input("phone:"))
         age=int(input("age:"))
         seria=int(input("seria:"))
-        user1=User(name,phone,age,seria)
+        password=int(input("passwort:"))
+        user1=User(name,phone,age,seria, password)
         self.users.append(user1)
         print(f"🦸✅ {name} Bazaga qo'shildi!! ")
 
@@ -187,10 +191,34 @@ class Park:
         print(f"Orders:{len(self.orders)} ta")
 
 
+
+    def login(self):
+        name=input("username")
+        password=int(input("password"))
+        for item in self.users:
+            if item.name==name and item.password==password:
+                return item, True
+            return 1, False
+
+
 park=Park("FastTaxi 🚕")
-def park_manger(p:Park):
+admin = User('admin', 123456, 1234, 12,000)
+admin.is_admin = True
+park.users.append(admin)
+
+def driver_manger(s:Park):
     while True:
-        kod=input("========Park Manager======== \n 1.add_car \n 2.delete_car \n 3.update_car \n 4.view_cars \n 5.add_user \n 6.delete_user \n 7.update_user \n 8.view_user \n 9.add_order \n 10.view_order \n 11.user_blok \n 12.all_info:")
+        kod=input("1.update_user \n 2.view_cars")
+        if kod=="1":
+            s.update_user()
+        elif kod=="2":
+            s.view_cars()
+        else:
+            break
+
+def admin_manger(p:Park):
+    while True:
+        kod=input("========Park Manager======== \n 1.add_car \n 2.delete_car \n 3.update_car \n 4.view_cars \n 5.add_user \n 6.delete_user \n 7.update_user \n 8.view_user \n 9.add_order \n 10.view_order \n 11.user_blok \n 12.all_info \n 13.park_manger")
         if kod=="1":
             p.add_car()
         elif kod=="2":
@@ -223,8 +251,28 @@ def park_manger(p:Park):
             print("---------------------------")
             p.all_info()
             print("---------------------------")
+        elif kod=="13":
+            park_manager(park)
+        else:
+            break
 
-park_manger(park)
+
+
+# park_manger(park)
+
+def park_manager(p: Park):
+    while True:
+        user = p.login()
+        if user[1]:
+            admin_manger(park)
+        elif user[0]:
+            driver_manger(park)
+        else:
+            break
+
+park_manager(park)
+
+
 
 
 
