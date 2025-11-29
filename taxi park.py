@@ -105,7 +105,7 @@ class Park:
         seria=int(input("seria raqami:"))
         for i in self.users:
             if i.seria==seria:
-                # name, phone, age, seria
+
                 i.name=input("new name:")
                 i.phone=int(input("new phone:"))
                 i.age=int(input("new age:"))
