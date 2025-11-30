@@ -10,6 +10,8 @@ class Car:
         self.brand = brand
         self.seria=seria
         self.is_active = True
+        self.is_bron = False
+        self.bron_by = None
 
 
 
@@ -40,14 +42,18 @@ class Park:
         self.orders=[]
 
     def add_car(self):
+        try:
 
-        model=input("model:")
-        brand=input("brand:")
-        year=input("year:")
-        seria=int(input("seria:"))
-        car1=Car(model,brand,year,seria)
-        self.cars.append(car1)
-        print(f"🚗✅ {model} avtomabili qo'shildi!!")
+            model=input("model:")
+            brand=input("brand:")
+            year=input("year:")
+            seria=int(input("seria:"))
+            car1=Car(model,brand,year,seria)
+            self.cars.append(car1)
+            print(f"🚗✅ {model} avtomabili qo'shildi!!")
+        except ValueError:
+            print("\033[91m❌ Mashina qo'shilmadi malumotlar xato!! \n       QAYTA URINB KO'RING  \033[0m")
+
 
 
 
@@ -85,15 +91,18 @@ class Park:
 
 
     def add_user(self):
+        try:
 
-        name=input("name:")
-        phone=int(input("phone:"))
-        age=int(input("age:"))
-        seria=int(input("seria:"))
-        password=int(input("passwort:"))
-        user1=User(name,phone,age,seria, password)
-        self.users.append(user1)
-        print(f"🦸✅ {name} Bazaga qo'shildi!! ")
+            name=input("name:")
+            phone=int(input("phone:"))
+            age=int(input("age:"))
+            seria=int(input("seria:"))
+            password=int(input("password:"))
+            user1=User(name,phone,age,seria, password)
+            self.users.append(user1)
+            print(f"🦸✅ {name} Bazaga qo'shildi!! ")
+        except ValueError:
+            print("\033[91m❌ User qo'shilmadi malumotlar xato!! \n       QAYTA URINB KO'RING  \033[0m")
 
     def delete_user(self):
         seria=int(input("seria raqami:"))
@@ -190,15 +199,60 @@ class Park:
         print(f"Users:{len(self.users)} ta")
         print(f"Orders:{len(self.orders)} ta")
 
+    def bron_car(self):
+        try:
+            user_id = int(input("user seria:"))
+        except ValueError:
+            return ("❌ Xato! Seria faqat RAQAM bo‘lishi kerak")
+        try:
+            car_id = int(input("car seria:"))
+        except ValueError:
+            return print("❌ Xato! Seria faqat RAQAM bo‘lishi kerak!")
 
+        for user in self.users:
+            if user.seria == user_id:
+                for car in self.cars:
+                    if car.seria == car_id:
+                        if car.is_bron == False:
+                            car.is_bron = True
+                            car.bron_by = user.name
+                            return print(f"✅ {car.model} mashinasi {user.name} tomonidan BRON qilindi!")
+                        else:
+                            return print(f"❌ Bu mashina allaqachon {car.booked_by} tomonidan bron qilingan!")
+                    else:
+                        print("❌ Bunday mashina topilmadi")
+                return
+        print("❌ User topilmadi!")
+
+    def confirm_bron_admin(self):
+        try:
+            car_id = int(input("Car seria: "))
+        except ValueError:
+            return print("❌ Xato! Seria faqat RAQAM bo‘lishi kerak!")
+
+        for car in self.cars:
+            if car.seria == car_id:
+                car.is_active = True
+                car.is_bron = False
+                print(f"✅ ADMIN tasdiqladi! Mashina: {car.model} rasmiy faol!")
+                return
+            else:
+                print("❌ Bunday mashina topilmadi!")
 
     def login(self):
-        name=input("username")
-        password=int(input("password"))
+        try:
+            name = input("username: ")
+            password = int(input("password: "))
+        except ValueError:
+            print("\033[91m❌ Password yoki Name xato!!\033[0m")
+            return None, False
+
         for item in self.users:
-            if item.name==name and item.password==password:
+            if item.name == name and item.password == password:
                 return item, True
-            return 1, False
+
+        print("\033[91m❌ Login yoki Parol xato!!\033[0m")
+        return None, False
 
 
 park=Park("FastTaxi 🚕")
@@ -208,17 +262,19 @@ park.users.append(admin)
 
 def driver_manger(s:Park):
     while True:
-        kod=input("1.update_user \n 2.view_cars")
+        kod=input("1.update_user \n 2.view_cars \n 3.bron_car:")
         if kod=="1":
             s.update_user()
         elif kod=="2":
             s.view_cars()
+        elif kod=="3":
+            s.bron_car()
         else:
             break
 
 def admin_manger(p:Park):
     while True:
-        kod=input("========Park Manager======== \n 1.add_car \n 2.delete_car \n 3.update_car \n 4.view_cars \n 5.add_user \n 6.delete_user \n 7.update_user \n 8.view_user \n 9.add_order \n 10.view_order \n 11.user_blok \n 12.all_info \n 13.park_manger")
+        kod=input("========Park Manager======== \n 1.add_car \n 2.delete_car \n 3.update_car \n 4.view_cars \n 5.add_user \n 6.delete_user \n 7.update_user \n 8.view_user \n 9.add_order \n 10.view_order \n 11.user_blok \n 12.all_info \n 13.confirm_bron_admin \n 14.park_manger:")
         if kod=="1":
             p.add_car()
         elif kod=="2":
@@ -252,6 +308,8 @@ def admin_manger(p:Park):
             p.all_info()
             print("---------------------------")
         elif kod=="13":
+            p.confirm_bron_admin()
+        elif kod=="14":
             park_manager(park)
         else:
             break
@@ -263,14 +321,35 @@ def admin_manger(p:Park):
 def park_manager(p: Park):
     while True:
         user = p.login()
-        if user[1]:
-            admin_manger(park)
-        elif user[0]:
-            driver_manger(park)
-        else:
+
+        if user[0] is None:
             break
 
+        if user[0].is_admin:
+            admin_manger(p)
+
+        else:
+            driver_manger(p)
+
 park_manager(park)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
